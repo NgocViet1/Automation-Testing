@@ -55,12 +55,28 @@ public class RegistrationPage extends BasePage {
     }
 
     public void selectGender(String gender) {
+        By locator;
+
         switch (gender.toLowerCase()) {
-            case "male" -> click(genderMale);
-            case "female" -> click(genderFemale);
-            case "other" -> click(genderOther);
+            case "male" -> locator = genderMale;
+            case "female" -> locator = genderFemale;
+            case "other" -> locator = genderOther;
+            default -> throw new IllegalArgumentException("Gender not recognized");
+        }
+
+        WebElement element = waitForVisibility(locator);
+
+        // Cuộn đến phần tử trước
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+
+        try {
+            element.click();
+        } catch (ElementClickInterceptedException e) {
+            // Nếu bị chặn thì dùng JavaScript để click
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
         }
     }
+
 
     public void enterMobile(String value) {
         type(mobile, value);
